@@ -2,6 +2,10 @@ require("./config/database").connect()
 const express = require("express")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
+var cookieParser = require("cookie-parser")
+
+//custom middleware 
+const auth = require('cookie-parser')
 
 const User = require("./model/user")
 
@@ -14,8 +18,10 @@ app.get("/", (req,res) => {
 
 app.post("/register", async (req,res)=>{
     try {
+          // coolect info from frontend
         const{firstname, lastname, email, password} = req.body
 
+        //validate
         if (!(email && password && firstname && lastname)) {
             res.status(401).send("All item are mandatory")
         }
@@ -46,8 +52,6 @@ app.post("/register", async (req,res)=>{
 
        res.staus(201).json(user)
     
-
-
     } catch (error){
         console.log("error is in resposnse")
     }
@@ -65,7 +69,13 @@ app.post("/login", async (req,res) => {
         }
         //check user in databese
         const user = await User.findOne({email})
+        if (user){
+            res.status(401).send("Userr already in database")
+           }
+    
         // user not exist                    do toorrw
+        
+
         //match the pass
         if(user && (await bcrypt.compare(password, user.password))) {
            const token =  jwt.sign({id:user._id, email},'sparag', {expiresIn: '200h'})
@@ -95,3 +105,8 @@ app.post("/login", async (req,res) => {
         console.log(error)
     }
 })
+
+
+app.get("/dashboard", (req, auth, res) =>{
+   res.send('welcone to dashboard')
+}) 
