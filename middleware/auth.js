@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken')
 
-const auth = (req, res) => {
+const auth = (req, res, next) => {
     console.log(req.cookies);
-    const token = req.cookies
+    const {token} = req.cookies
 
     // if token is not availble
     if (!token){
@@ -18,9 +18,9 @@ const auth = (req, res) => {
 
 
     } catch (error) {
-        res.status(403).('token is invalid')
+        res.status(403).send('token is invalid')
     }
    return next()
 }
 
-module.exports = auth ()
+module.exports = auth 
