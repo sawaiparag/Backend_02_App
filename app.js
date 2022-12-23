@@ -22,6 +22,7 @@ app.get("/", (req,res) => {
 })
 
 app.post("/register", async (req,res)=>{
+   
     try {
           // coolect info from frontend
         const{firstname, lastname, email, password} = req.body
@@ -31,7 +32,7 @@ app.post("/register", async (req,res)=>{
             res.status(401).send("All item are mandatory")
         }
      //check user exists or not
-       const existingUser = await User.findOne({email: email})
+       const existingUser = await User.findOne({email})
        if (existingUser){
         res.status(401).send("User already in database")
        }
@@ -112,7 +113,7 @@ app.post("/login", async (req,res) => {
 })
 
 
-app.get("/dashboard", (req, auth, res) =>{
+app.get("/dashboard", auth, (req,  res) =>{
    res.send('welcone to dashboard')
 }) 
 
